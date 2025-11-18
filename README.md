@@ -86,6 +86,7 @@ A aplicação estará disponível em `http://localhost:5173` (Vite) ou `http://l
 
 ## 📁 Estrutura do Projeto
 adapty-frontend/
+
 ├── public/ # Assets estáticos
 
 ├── src/
