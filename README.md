@@ -1,6 +1,7 @@
 ## Repositório Front-end (Adapty WebApp)
 [![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 
 Este repositório contém o código-fonte da aplicação web do Adapty, a interface principal para os usuários interagirem com decks, flashcards e as funcionalidades de acessibilidade. Construída com React, TypeScript e estilizada com Tailwind CSS.
@@ -13,16 +14,17 @@ Este repositório contém o código-fonte da aplicação web do Adapty, a interf
 4.  [Configuração do Ambiente](#-configuração-do-ambiente)
 5.  [Scripts Disponíveis](#-scripts-disponíveis)
 6.  [Estrutura do Projeto](#-estrutura-do-projeto)
-7.  [Funcionalidades Chave](#-funcionalidades-chave)
-8.  [Acessibilidade](#-acessibilidade)
-9.  [Contribuição](#-contribuição)
-10. [Licença](#-licença)
+7.  [Estrutura de Fluxos](#-estrutura-de-fluxos)
+8.  [Funcionalidades Chave](#-funcionalidades-chave)
+9.  [Acessibilidade e Inclusão](#-acessibilidade-e-inclusão)
+10.  [Contribuição](#-contribuição)
+11. [Licença](#-licença)
 
 ## 💡 Sobre o Projeto
 
-O Adapty é uma aplicação web revolucionária focada em estudo com flashcards, **priorizando a acessibilidade e personalização para estudantes com divergências cognitivas**, como TDAH, dislexia e autismo. Nosso objetivo é promover a **inclusão e equidade (ODS 4)** por meio de aprendizado personalizado, valorizando a diversidade e garantindo **acesso igualitário a recursos educacionais (ODS 10)**.
+O Adapty é uma aplicação web que visa mitigar as barreiras usando flashcards como método de estudo, **priorizando a acessibilidade e personalização para estudantes com divergências cognitivas**, como TDAH, dislexia e autismo. Nosso objetivo é promover a **inclusão e equidade (ODS 4)** por meio de aprendizado personalizado, valorizando a diversidade e garantindo **acesso igualitário a recursos educacionais (ODS 10)**.
 
-O front-end é a face do Adapty, oferecendo:
+O front-end implementa:
 
 *   Interface intuitiva para **Criar e Editar Decks** (RF002).
 *   Gerenciamento de **Cadastro e Login** (RF001).
@@ -35,8 +37,7 @@ O front-end é a face do Adapty, oferecendo:
 
 ## 💻 Tecnologias Utilizadas
 
-*   **Framework:** React
-*   **Linguagem:** TypeScript
+*   **Core:** React, TypeScript, Vite.
 *   **Estilização:** Tailwind CSS
 *   **Gerenciamento de Estado:** (Mencionar se está usando Context API, Redux, Zustand, etc. - *exemplo: React Context API*)
 *   **Rotas:** React Router DOM
@@ -126,6 +127,7 @@ adapty-frontend/
 └── vite.config.ts # Configuração do Vite (ou craco.config.js para CRA)
 ## ✨ Funcionalidades Chave
 
+*   **Menu Principal:** Perfil, Flipcards (Biblioteca), Falar com Professor, Análise de Desempenho.
 *   **Dashboard do Usuário:** Visão geral dos decks, fácil acesso para criar ou iniciar estudos.
 *   **Criador de Decks e Cartões:** Interface intuitiva para **Personalizar conteúdos com facilidade**.
 *   **Sessão de Estudo Interativa:** Apresentação de flashcards com feedback e sistema de repetição espaçada.
@@ -139,8 +141,9 @@ adapty-frontend/
     *   Modo Leitor (para remover distrações).
 *   **Estatísticas de Estudo:** Acompanhamento do progresso e desempenho.
 *   **Importar/Exportar Decks:** Gerenciamento eficiente de decks em formatos JSON/CSV.
+*   **Professor:** Visualização do desempenho consolidado da turma.
 
-## ♿ Acessibilidade
+## ♿ Acessibilidade e Inclusão
 
 O Adapty é construído com foco primário em **acessibilidade**, cumprindo o objetivo mínimo de **WCAG AA**. As funcionalidades de acessibilidade são integradas e facilmente configuráveis, abordando as **Barreiras Cognitivas e Suas Soluções** detalhadas em nossa apresentação:
 
