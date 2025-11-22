@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { AccessibilityPanel } from './components/AccessibilityPanel';
-import { StudySession } from './components/StudySession';
-import { Button } from './components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
+import { AccessibilityPanel } from '../components/AccessibilityPanel';
+import { StudySession } from '../components/StudySession';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { BookOpen, Brain, GraduationCap } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 
 interface AccessibilitySettings {
   fontSize: number;
