@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 // Assumindo que você tem os componentes necessários
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/Input";
 
 export default function Login() {
@@ -21,7 +22,7 @@ export default function Login() {
 
     try {
       // Chamada de API para o Backend na porta 3001
-      const response = await fetch("http://localhost:3001/login", {
+      const response = await fetch("http://localhost:5024/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

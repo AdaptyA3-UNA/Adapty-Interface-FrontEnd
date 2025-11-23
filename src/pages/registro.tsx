@@ -1,10 +1,8 @@
 // pages/Registro.tsx
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// Assumindo que você tem os estilos e componentes necessários
 import "../styles/globals.css";
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/Input";
 
 export default function Registro() {
@@ -17,7 +15,6 @@ export default function Registro() {
   const handleRegistro = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Validação local
     if (!name || !email || !password || !confirmPassword) {
       alert("Preencha todos os campos.");
       return;
@@ -28,31 +25,39 @@ export default function Registro() {
     }
 
     try {
-      // 2. Chamada de API para o Backend na porta 3001
-      const response = await fetch("http://localhost:3001/register", {
+      // --- CORREÇÃO AQUI ---
+      // 1. Porta ajustada para 5024 (ou a que aparecer no seu terminal 'dotnet run')
+      // 2. Rota ajustada para /api/auth/register
+      const response = await fetch("http://localhost:5024/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // Envia name, email e password
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ 
+            name, 
+            email, 
+            password,
+            role: "Student" // Adicionado para evitar erro de validação
+        }),
       });
 
-      const data = await response.json();
+      // Verifica se a resposta tem conteúdo antes de tentar ler JSON
+      let data = {};
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+          data = await response.json();
+      }
 
       if (response.ok) {
-        // Registro bem-sucedido
-        alert("Usuário registrado com sucesso! Faça login.");
-        // Navega para a tela de Login (rota "/")
+        alert("Conta criada com sucesso! Redirecionando para o login...");
         navigate("/"); 
       } else {
-        // Erro retornado pelo backend (ex: email já existe, erro de DB)
-        alert(`Erro no registro: ${data.error || "Erro desconhecido"}`);
+        // @ts-ignore
+        alert(`Erro: ${data.message || "Falha ao registrar"}`);
       }
     } catch (error) {
-      // Erro de rede ou servidor inacessível
-      console.error("Erro ao tentar conectar ao servidor:", error);
-      alert("Não foi possível conectar ao servidor de registro.");
+      console.error("Erro técnico:", error);
+      alert("Erro de conexão. Verifique se o Backend está rodando na porta 5024.");
     }
   };
 
@@ -60,32 +65,28 @@ export default function Registro() {
     <div className="app-center">
       <div className="auth-card">
         <div className="auth-logo">Adapty</div>
-        <div className="auth-sub">Crie sua conta e comece agora</div>
+        <div className="auth-sub">Crie sua conta de estudante</div>
 
         <form onSubmit={handleRegistro} className="form-inner">
           <div className="auth-field">
             <label>Nome</label>
-            <Input type="text" placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} />
+            <Input type="text" placeholder="Seu nome" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-
           <div className="auth-field">
             <label>E-mail</label>
-            <Input type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
-
           <div className="auth-field">
             <label>Senha</label>
-            <Input type="password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input type="password" placeholder="Mínimo 6 caracteres" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
-
           <div className="auth-field">
             <label>Confirmar senha</label>
-            <Input type="password" placeholder="Confirmação de senha" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <Input type="password" placeholder="Repita a senha" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
           </div>
-
-          <Button type="submit" className="btn-primary">Confirmar</Button>
+          <Button type="submit" className="btn-primary">Criar Conta</Button>
           <Button variant="link" className="btn-link" onClick={() => navigate("/")}>
-            Já tem uma conta? Faça login
+            Voltar para Login
           </Button>
         </form>
       </div>

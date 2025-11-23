@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AccessibilityPanel } from '../components/AccessibilityPanel';
 import { StudySession } from '../components/StudySession';
-import { Button } from "../components/ui/Button";
+import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { BookOpen, Brain, GraduationCap } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -69,6 +69,57 @@ const sampleDecks: Deck[] = [
 ];
 
 export default function Home() {
+  // 1. Estado para armazenar os decks que vêm do Backend
+  const [decks, setDecks] = useState<Deck[]>([]);
+  // ... (mantenha os outros states)
+
+  // 2. ADICIONE ESTE BLOCO PARA BUSCAR DO BANCO
+  useEffect(() => {
+    const fetchDecks = async () => {
+      const token = localStorage.getItem('token');
+      
+      // Se não tem token, manda volta pro login
+      if (!token) {
+          // navigate('/'); // Precisa importar o useNavigate se quiser redirecionar
+          return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5024/api/decks', {
+          headers: {
+            'Authorization': `Bearer ${token}`, // O Cadeado!
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // O backend deve retornar um array de decks.
+          // Precisamos garantir que eles tenham o formato certo (ícone, etc)
+          const formattedDecks = data.map((d: any) => ({
+             ...d,
+             icon: BookOpen, // Adiciona o ícone padrão, já que o banco não salva ícone
+             cards: d.cards || [] // Garante que cards não seja null
+          }));
+          setDecks(formattedDecks);
+        } else {
+            console.error("Falha ao buscar decks");
+        }
+      } catch (error) {
+        console.error("Erro de conexão", error);
+      }
+    };
+
+    fetchDecks();
+  }, []); // Array vazio = roda apenas ao carregar a página
+
+  // ... (o resto do código)
+
+  // 3. NA HORA DE RENDERIZAR (Lá embaixo no JSX)
+  // Procure onde está: sampleDecks.map((deck) => ...
+  // E mude para:
+  
+  // decks.map((deck) =>
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: 24,
     fontFamily: 'system-ui',
@@ -240,3 +291,4 @@ export default function Home() {
     </div>
   );
 }
+
