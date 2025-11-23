@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { AccessibilityPanel } from '../components/AccessibilityPanel';
 import { StudySession } from '../components/StudySession';
-import { Button } from '../components/ui/button';
+import { Button } from "../components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { BookOpen, Brain, GraduationCap } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { useEffect } from 'react';
 
 interface AccessibilitySettings {
   fontSize: number;
@@ -82,6 +83,14 @@ export default function Home() {
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const [activeTab, setActiveTab] = useState('decks');
 
+   useEffect(() => {
+    if (settings.darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [settings.darkMode]);
+
   const handleSettingsChange = (newSettings: Partial<AccessibilitySettings>) => {
     setSettings({ ...settings, ...newSettings });
   };
@@ -105,7 +114,7 @@ export default function Home() {
         {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-4xl mb-2">Adapty</h1>
+            <h1 className="auth-logo-home">Adapty</h1>
             <p className="text-lg text-muted-foreground">
               Aprenda no seu ritmo, do seu jeito
             </p>
@@ -148,7 +157,7 @@ export default function Home() {
                     <CardContent>
                       <Button
                         onClick={() => handleStartStudy(deck)}
-                        className="w-full"
+                        className="btn-primary w-full"
                         size="lg"
                       >
                         Começar a Estudar

@@ -1,67 +1,61 @@
-import { useState } from "react";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/card";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
 
 export default function Login() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Aqui você colocaria validação real mais tarde
-    if (email.length > 0 && password.length > 0) {
-      navigate("/home"); // redireciona para a home
+    if (email && password) {
+      navigate("/home");
+    } else {
+      alert("Preencha email e senha.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Card className="w-full max-w-sm shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
-        </CardHeader>
+    <div className="app-center">
+  <div className="auth-card">
+    <div className="auth-logo">Adapty</div>
+    <div className="auth-sub">Sistema de Flashcards acessível para todos</div>
 
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            
-            <div>
-              <label className="text-sm font-medium">Email</label>
-              <Input
-                type="email"
-                placeholder="seuemail@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+    <form onSubmit={handleLogin} className="form-inner">
+      <div className="auth-field">
+        <label>Login</label>
+        <Input
+          type="email"
+          placeholder="Digite seu login"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
 
-            <div>
-              <label className="text-sm font-medium">Senha</label>
-              <Input
-                type="password"
-                placeholder="•••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+      <div className="auth-field">
+        <label>Senha</label>
+        <Input
+          type="password"
+          placeholder="Digite sua senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
 
-            <Button variant="link" className="w-full text-lg" onClick={() => navigate("/registro")}>
-              Não tem uma conta? Cadastre-se
-            </Button>
+      <Button type="submit" className="btn-primary w-full">Entrar</Button>
+      <Button
+  variant="outline"
+  className="btn-outline-gradient w-full mt-2"
+  onClick={() => navigate("/registro")}
+>
+  Registrar
+</Button>
 
-            <Button type="submit" className="w-full text-lg">
-              Entrar
-            </Button>
+    </form>
+  </div>
+</div>
 
-          </form>
-        </CardContent>
-      </Card>
-    </div>
   );
 }
