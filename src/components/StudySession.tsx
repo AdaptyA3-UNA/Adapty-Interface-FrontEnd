@@ -42,23 +42,67 @@ export function StudySession({
   const [cards, setCards] = useState(initialCards);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  /*
   const [knownCards, setKnownCards] = useState<number[]>([]);
   const [reviewCards, setReviewCards] = useState<number[]>([]);
+  */
+  const [sessionStats, setSessionStats] = useState({ known: 0, review: 0 });
 
   const currentCard = cards[currentIndex];
-  const progress = ((currentIndex + 1) / cards.length) * 100;
 
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
+  // NOVA FUNÇÃO: Envia a nota para o Backend calcular o SM-2
+
+  const sendReview = async (quality: number) => {
+    // 1. Atualiza o contador visual (Feedback imediato para o usuário)
+    if (quality >= 3) { // 3, 4, 5 = Acertou/Fácil
+        setSessionStats(prev => ({ ...prev, known: prev.known + 1 }));
+    } else { // 1, 2 = Errou/Difícil
+        setSessionStats(prev => ({ ...prev, review: prev.review + 1 }));
+    }
+    const token = localStorage.getItem('token');
+    try {
+      await fetch(`http://localhost:5024/api/study/card/${currentCard.id}/review`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ quality, timeTakenSeconds: 10 }) // Pode implementar um timer depois
+      });
+      
+      // Só avança depois de salvar no banco
+      handleNext(); 
+    } catch (error) {
+      console.error("Erro ao salvar revisão", error);
+    }
   };
 
+  // ATUALIZAÇÃO: Botão "Já Sei" (Nota 5 - Fácil)
+  const handleMarkKnown = () => {
+    sendReview(5); 
+  };
+
+  // ATUALIZAÇÃO: Botão "Revisar" (Nota 2 - Difícil)
+  const handleMarkReview = () => {
+    sendReview(2);
+  };
+
+  // MANTENHA: A lógica visual de handleFlip, handleNext (apenas para navegação visual)
   const handleNext = () => {
     if (currentIndex < cards.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setIsFlipped(false);
     } else {
-      onComplete();
+      onComplete(); // Volta para a Home
     }
+  };
+
+  // ... O resto do JSX (HTML) permanece IGUAL, usando os componentes de UI
+  // <Button onClick={handleMarkKnown}>
+  const progress = ((currentIndex + 1) / cards.length) * 100;
+
+  const handleFlip = () => {
+    setIsFlipped(!isFlipped);
   };
 
   const handlePrevious = () => {
@@ -67,8 +111,7 @@ export function StudySession({
       setIsFlipped(false);
     }
   };
-
-  const handleMarkKnown = () => {
+  /*const handleMarkKnown = () => {
     if (!knownCards.includes(currentCard.id)) {
       setKnownCards([...knownCards, currentCard.id]);
     }
@@ -84,7 +127,7 @@ export function StudySession({
     const filtered = knownCards.filter((id) => id !== currentCard.id);
     setKnownCards(filtered);
     handleNext();
-  };
+  };*/
 
   const handleShuffle = () => {
     const shuffled = [...cards].sort(() => Math.random() - 0.5);
@@ -96,8 +139,8 @@ export function StudySession({
   const handleReset = () => {
     setCurrentIndex(0);
     setIsFlipped(false);
-    setKnownCards([]);
-    setReviewCards([]);
+    //setKnownCards([]);
+    //setReviewCards([]);
   };
 
   const backgroundColor = highContrast
@@ -127,11 +170,11 @@ export function StudySession({
         <div className="flex gap-2 flex-wrap">
           <Badge variant="secondary" className="gap-1">
             <Check className="w-3 h-3" />
-            Conhece: {knownCards.length}
+            Conhece: {sessionStats.known}
           </Badge>
           <Badge variant="secondary" className="gap-1">
             <X className="w-3 h-3" />
-            Revisar: {reviewCards.length}
+            Revisar: {sessionStats.review}
           </Badge>
         </div>
       </div>
@@ -170,7 +213,7 @@ export function StudySession({
           onClick={handlePrevious}
           disabled={currentIndex === 0}
           className="gap-2"
-          onKeyDown={(e) => {
+          onKeyDown={(e: { key: string; }) => {
             if (e.key === 'ArrowLeft') {
               handlePrevious();
             }
@@ -185,7 +228,7 @@ export function StudySession({
           onClick={handleNext}
           disabled={currentIndex === cards.length - 1}
           className="gap-2"
-          onKeyDown={(e) => {
+          onKeyDown={(e: { key: string; }) => {
             if (e.key === 'ArrowRight') {
               handleNext();
             }

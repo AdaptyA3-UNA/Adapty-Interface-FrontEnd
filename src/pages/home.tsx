@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AccessibilityPanel } from '../components/AccessibilityPanel';
 import { StudySession } from '../components/StudySession';
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { BookOpen, Brain, GraduationCap } from 'lucide-react';
+import { BookOpen, Plus, Brain, GraduationCap } from 'lucide-react'; // Adicionei Plus
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { useEffect } from 'react';
+import { Input } from "../components/ui/Input";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "../components/ui/sheet";
 
 interface AccessibilitySettings {
   fontSize: number;
@@ -26,100 +28,17 @@ interface Deck {
   cards: Array<{ id: number; front: string; back: string }>;
 }
 
-const sampleDecks: Deck[] = [
-  {
-    id: 1,
-    name: 'Matemática Básica',
-    description: '20 cartões de conceitos fundamentais',
-    icon: Brain,
-    cards: [
-      { id: 1, front: 'O que é uma fração?', back: 'Uma fração representa uma parte de um todo. Ex: 1/2 significa uma parte de duas partes iguais.' },
-      { id: 2, front: 'O que é uma equação?', back: 'Uma equação é uma igualdade matemática que contém uma ou mais variáveis. Ex: 2x + 3 = 7' },
-      { id: 3, front: 'O que é perímetro?', back: 'Perímetro é a soma de todos os lados de uma figura geométrica.' },
-      { id: 4, front: 'O que é área?', back: 'Área é a medida da superfície de uma figura geométrica, expressa em unidades quadradas.' },
-      { id: 5, front: 'O que são números primos?', back: 'Números primos são números maiores que 1 que só podem ser divididos por 1 e por eles mesmos. Ex: 2, 3, 5, 7, 11' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Ciências - Corpo Humano',
-    description: '15 cartões sobre anatomia básica',
-    icon: BookOpen,
-    cards: [
-      { id: 6, front: 'Quantos ossos tem o corpo humano adulto?', back: 'O corpo humano adulto tem aproximadamente 206 ossos.' },
-      { id: 7, front: 'Qual é a função do coração?', back: 'O coração bombeia sangue para todo o corpo, levando oxigênio e nutrientes às células.' },
-      { id: 8, front: 'O que são os pulmões?', back: 'Os pulmões são órgãos responsáveis pela respiração, realizando a troca de oxigênio e gás carbônico.' },
-      { id: 9, front: 'Qual é o maior órgão do corpo?', back: 'A pele é o maior órgão do corpo humano.' },
-      { id: 10, front: 'Quantos litros de sangue circulam no corpo?', back: 'Um adulto tem aproximadamente 5 litros de sangue circulando no corpo.' },
-    ],
-  },
-  {
-    id: 3,
-    name: 'História do Brasil',
-    description: '18 cartões de eventos importantes',
-    icon: GraduationCap,
-    cards: [
-      { id: 11, front: 'Quando o Brasil foi descoberto?', back: 'O Brasil foi descoberto em 22 de abril de 1500 por Pedro Álvares Cabral.' },
-      { id: 12, front: 'Quando foi proclamada a Independência?', back: 'A Independência do Brasil foi proclamada em 7 de setembro de 1822 por Dom Pedro I.' },
-      { id: 13, front: 'Quando foi abolida a escravidão?', back: 'A escravidão foi abolida em 13 de maio de 1888 com a Lei Áurea, assinada pela Princesa Isabel.' },
-      { id: 14, front: 'Quando foi proclamada a República?', back: 'A República foi proclamada em 15 de novembro de 1889 pelo Marechal Deodoro da Fonseca.' },
-      { id: 15, front: 'Quem foi Tiradentes?', back: 'Tiradentes foi um dentista e militar que liderou a Inconfidência Mineira, movimento pela independência do Brasil.' },
-    ],
-  },
-];
-
 export default function Home() {
-  // 1. Estado para armazenar os decks que vêm do Backend
-  const [decks, setDecks] = useState<Deck[]>([]);
-  // ... (mantenha os outros states)
-
-  // 2. ADICIONE ESTE BLOCO PARA BUSCAR DO BANCO
-  useEffect(() => {
-    const fetchDecks = async () => {
-      const token = localStorage.getItem('token');
-      
-      // Se não tem token, manda volta pro login
-      if (!token) {
-          // navigate('/'); // Precisa importar o useNavigate se quiser redirecionar
-          return;
-      }
-
-      try {
-        const response = await fetch('http://localhost:5024/api/decks', {
-          headers: {
-            'Authorization': `Bearer ${token}`, // O Cadeado!
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          // O backend deve retornar um array de decks.
-          // Precisamos garantir que eles tenham o formato certo (ícone, etc)
-          const formattedDecks = data.map((d: any) => ({
-             ...d,
-             icon: BookOpen, // Adiciona o ícone padrão, já que o banco não salva ícone
-             cards: d.cards || [] // Garante que cards não seja null
-          }));
-          setDecks(formattedDecks);
-        } else {
-            console.error("Falha ao buscar decks");
-        }
-      } catch (error) {
-        console.error("Erro de conexão", error);
-      }
-    };
-
-    fetchDecks();
-  }, []); // Array vazio = roda apenas ao carregar a página
-
-  // ... (o resto do código)
-
-  // 3. NA HORA DE RENDERIZAR (Lá embaixo no JSX)
-  // Procure onde está: sampleDecks.map((deck) => ...
-  // E mude para:
+  const navigate = useNavigate();
   
-  // decks.map((deck) =>
+  // 1. Estado dos Decks (Vem do Banco)
+  const [decks, setDecks] = useState<Deck[]>([]);
+  
+  // 2. Estados para Criar Novo Deck
+  const [isCreating, setIsCreating] = useState(false);
+  const [newDeckTitle, setNewDeckTitle] = useState("");
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: 24,
     fontFamily: 'system-ui',
@@ -134,12 +53,89 @@ export default function Home() {
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
   const [activeTab, setActiveTab] = useState('decks');
 
-   useEffect(() => {
-    if (settings.darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+  // 3. BUSCAR DECKS (Backend)
+  useEffect(() => {
+    const fetchDecks = async () => {
+      let token = localStorage.getItem('token');
+      if (!token) { navigate('/'); return; }
+      
+      // Limpeza de segurança (remove aspas se tiver)
+      token = token.replace(/"/g, '');
+
+      try {
+        const response = await fetch('http://localhost:5024/api/decks', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const formattedDecks = data.map((d: any) => ({
+             ...d,
+             icon: BookOpen, // Ícone padrão
+          }));
+          setDecks(formattedDecks);
+        } else if (response.status === 401) {
+            // Só redireciona se for erro de Auth
+            localStorage.removeItem('token');
+            navigate('/');
+        }
+      } catch (error) {
+        console.error("Erro de conexão", error);
+      }
+    };
+
+    fetchDecks();
+  }, [navigate]);
+
+  // 4. FUNÇÃO PARA CRIAR DECK
+  const handleCreateDeck = async () => {
+    if (!newDeckTitle.trim()) return;
+    setIsCreating(true);
+    let token = localStorage.getItem('token');
+    if (token) token = token.replace(/"/g, '');
+
+    try {
+      const response = await fetch('http://localhost:5024/api/decks', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+            title: newDeckTitle, 
+            description: "Criado no App", 
+            tags: [] 
+        })
+      });
+
+      if (response.ok) {
+        const newDeckData = await response.json();
+        // Adiciona na lista visualmente
+        const newDeckObj: Deck = {
+            id: newDeckData.deckId,
+            name: newDeckTitle,
+            description: "Criado no App",
+            icon: BookOpen,
+            cards: []
+        };
+        setDecks([...decks, newDeckObj]);
+        setNewDeckTitle("");
+        setIsSheetOpen(false);
+      }
+    } catch (error) {
+      console.error("Erro ao criar deck", error);
+    } finally {
+      setIsCreating(false);
     }
+  };
+
+  // ... (Efeitos e handlers de settings mantidos iguais) ...
+  useEffect(() => {
+    if (settings.darkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
   }, [settings.darkMode]);
 
   const handleSettingsChange = (newSettings: Partial<AccessibilitySettings>) => {
@@ -162,111 +158,82 @@ export default function Home() {
   return (
     <div className={`min-h-screen ${bgClass} transition-colors duration-300`}>
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="auth-logo-home">Adapty</h1>
-            <p className="text-lg text-muted-foreground">
-              Aprenda no seu ritmo, do seu jeito
-            </p>
+            <p className="text-lg text-muted-foreground">Aprenda no seu ritmo</p>
           </div>
           <AccessibilityPanel settings={settings} onSettingsChange={handleSettingsChange} />
         </div>
 
-        {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
             <TabsTrigger value="decks">Meus Decks</TabsTrigger>
             <TabsTrigger value="study" disabled={!selectedDeck}>Estudar</TabsTrigger>
           </TabsList>
 
-          {/* Decks Tab */}
           <TabsContent value="decks" className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl">Escolha um deck para começar</h2>
-              <p className="text-muted-foreground">
-                Selecione um conjunto de cartões para estudar
-              </p>
+            
+            {/* BOTÃO NOVO DECK */}
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Seus Decks</h2>
+                <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                  <SheetTrigger asChild>
+                    <Button className="gap-2 btn-primary">
+                      <Plus className="w-4 h-4" /> Novo Deck
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Novo Deck</SheetTitle>
+                      <SheetDescription>Crie um novo tópico de estudo.</SheetDescription>
+                    </SheetHeader>
+                    <div className="py-6 space-y-4">
+                        <label className="text-sm font-medium">Nome</label>
+                        <Input 
+                          value={newDeckTitle}
+                          onChange={(e) => setNewDeckTitle(e.target.value)}
+                          placeholder="Ex: História"
+                        />
+                    </div>
+                    <SheetFooter>
+                      <Button onClick={handleCreateDeck} disabled={isCreating} className="w-full btn-primary">
+                        Salvar
+                      </Button>
+                    </SheetFooter>
+                  </SheetContent>
+                </Sheet>
             </div>
 
+            {/* LISTA DE DECKS (Usando a variável 'decks' correta) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sampleDecks.map((deck) => {
-                const Icon = deck.icon;
-                return (
+              {decks.length === 0 ? (
+                <div className="col-span-3 text-center py-12 opacity-60 border-2 border-dashed rounded-lg">
+                  <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">Nenhum deck encontrado.</p>
+                  <p className="text-sm">Crie o primeiro clicando no botão acima!</p>
+                </div>
+              ) : (
+                decks.map((deck) => (
                   <Card key={deck.id} className={`${cardBgClass} hover:shadow-lg transition-shadow`}>
                     <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="flex items-center gap-2 mb-2">
-                            <Icon className="w-5 h-5" />
-                            {deck.name}
-                          </CardTitle>
-                          <CardDescription>{deck.description}</CardDescription>
-                        </div>
-                      </div>
+                      <CardTitle className="flex items-center gap-2">
+                        <BookOpen className="w-5 h-5" />
+                        {deck.name}
+                      </CardTitle>
+                      <CardDescription>{deck.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button
-                        onClick={() => handleStartStudy(deck)}
-                        className="btn-primary w-full"
-                        size="lg"
-                      >
-                        Começar a Estudar
+                      <Button onClick={() => handleStartStudy(deck)} className="w-full btn-primary">
+                        Estudar ({deck.cards.length} cartões)
                       </Button>
                     </CardContent>
                   </Card>
-                );
-              })}
+                ))
+              )}
             </div>
-
-            {/* Accessibility Features Info */}
-            <Card className={`${cardBgClass} mt-8`}>
-              <CardHeader>
-                <CardTitle>Recursos de Acessibilidade</CardTitle>
-                <CardDescription>
-                  Esta aplicação foi projetada para estudantes neurodivergentes
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Tamanho de fonte ajustável</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Fontes amigáveis para dislexia</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Modo escuro e alto contraste</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Controle de velocidade de animação</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Cores personalizáveis</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Navegação por teclado completa</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Sistema de progresso visual</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-green-500">✓</span>
-                    <span>Redução de distrações</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
           </TabsContent>
 
-          {/* Study Tab */}
           <TabsContent value="study">
             {selectedDeck && (
               <div className={`${cardBgClass} rounded-lg p-6 md:p-8`}>
@@ -291,4 +258,3 @@ export default function Home() {
     </div>
   );
 }
-

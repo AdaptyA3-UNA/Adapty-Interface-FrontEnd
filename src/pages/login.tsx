@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
 // Assumindo que você tem os componentes necessários
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/Input";
@@ -33,8 +32,9 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem('token', data.token);
         // Login bem-sucedido
-        alert(`Bem-vindo, ${data.user.name}!`);
+        alert(`Bem-vindo ao Adapty!`);
         // Navega para a tela Home (rota "/home")
         navigate("/home");
       } else {
