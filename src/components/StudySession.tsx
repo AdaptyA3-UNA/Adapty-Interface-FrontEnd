@@ -181,7 +181,11 @@ export function StudySession({
 
       {/* Progress bar */}
       <div className="space-y-2">
-        <Progress value={progress} className="h-3" />
+          <div className="h-3 rounded-full bg-gray-300"> 
+        <Progress 
+        value={progress}
+         className="progress-gradient-fill h-full rounded-full"
+        /> </div>
         <p className="text-sm text-center text-muted-foreground">
           {Math.round(progress)}% concluído
         </p>

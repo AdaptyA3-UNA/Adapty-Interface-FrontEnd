@@ -501,3 +501,51 @@ body, .app-bg {
 /* pequenos refinamentos de fonte e espaçamento pra copiar a imagem */
 .auth-logo { font-size: 28px; }
 .auth-sub { margin-top: 4px; margin-bottom: 18px; }
+
+
+.progress-gradient-fill {
+    background-color: var(--muted, #e0e0e0); 
+}
+
+.progress-gradient-fill > span {
+    background-image: linear-gradient(to right, #ffffff, #4e5555) !important;
+    background-color: transparent !important; 
+    
+    .dark & {
+        background-image: linear-gradient(to right, #f1f1f1, #7ddfe2) !important;
+    }
+}
+
+
+.action-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; 
+    transition: background-color 0.3s ease;
+}
+
+
+.delete-button {
+    background-color: #e83e4c; 
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #c82333; 
+}
+
+.edit-button {
+    background-color: white; 
+    color: #495057;
+    border: 1px solid #ced4da; 
+}
+
+.edit-button:hover {
+    background-color: #f8f9fa;
+}

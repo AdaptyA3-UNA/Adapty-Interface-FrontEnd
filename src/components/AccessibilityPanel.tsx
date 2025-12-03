@@ -44,7 +44,7 @@ export function AccessibilityPanel({ settings, onSettingsChange }: Accessibility
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="lg" className="gap-2">
+        <Button variant="outline" size="lg" className="btn-primary w-full">
           <Settings className="w-5 h-5" />
           Personalizar
         </Button>
