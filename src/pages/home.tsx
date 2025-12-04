@@ -338,18 +338,21 @@ export default function Home() {
                           Estudar ({deck.cards.length} cartões)
                         </Button>
                       </CardContent>
-                      <CardFooter className="pt-0 gap-3 border-t border-muted/20 p-4 bg-muted/5 flex justify-between">
+                      <CardFooter className="flex-1 pt-3 flex items-center justify-between">
                         <Button
+                        variant="ghost"
+                          size="sm"
                           onClick={() => handleDeleteDeck(deck.id, deck.name)} 
-                          className="text-white bg-red-600 hover:bg-red-700"
+                          className="text-muted-foreground text-red-600 hover:text-red-800 font-medium transition-colors hover:bg-red-50 rounded-md px-2 py-1 flex items-center gap-1" style={{ background: "#EF4343", color: "white" }}
                         >
+                          <Trash2 className="w-4 h-4" />
                           Excluir
                         </Button>
 
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-500 hover:text-[#03A3A9]"
+                          className="text-muted-foreground hover:text-primary text-gray-500 transition-colors hover:text-[#03A3A9] font-medium"
                           onClick={() => openAddCardSheet(deck.id)}
                         >
                           <Plus className="w-4 h-4 mr-1" /> Add Cartão
